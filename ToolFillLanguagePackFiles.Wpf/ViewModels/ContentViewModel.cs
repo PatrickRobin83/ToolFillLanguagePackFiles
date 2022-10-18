@@ -79,7 +79,8 @@ public partial class ContentViewModel
 
     private void ReadFilesFromDirectory()
     {
-       foreach (string file in Directory.GetFiles(ReadPath))
+        if (ReadPath != null)
+            foreach (string file in Directory.GetFiles(ReadPath))
             {
                 ListOfFilesToRead.Add(file);
             }
