@@ -69,12 +69,6 @@ public partial class ContentViewModel
         NumberOfFiles = allFilesCount;
         _result = (100 / NumberOfFiles) * Counter;
         CurrentProgressValue = _result;
-        if (CurrentProgressValue >= 100)
-        {
-            CurrentProgressValue = 100;
-            ProgressVisibility = false;
-        }
-
     }
 
     private void ReadFilesFromDirectory()
@@ -96,7 +90,7 @@ public partial class ContentViewModel
         FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
         folderBrowserDialog.Title = "Pfad";
         folderBrowserDialog.AllowMultiSelect = false;
-        folderBrowserDialog.InitialFolder = @"C:\";
+        folderBrowserDialog.InitialFolder = @"C:\Users\Public\Documents\smartPerformCollabApp\CollabAppData_2022.1.3\Data\Resources\LanguagePackTemplate";
         if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
         {
             ReadPath = folderBrowserDialog.SelectedFolder;
@@ -114,7 +108,7 @@ public partial class ContentViewModel
         FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
         folderBrowserDialog.Title = "Pfad";
         folderBrowserDialog.AllowMultiSelect = false;
-        folderBrowserDialog.InitialFolder = @"C:\";
+        folderBrowserDialog.InitialFolder = @"C:\Users\Public\Documents\smartPerformCollabApp\CollabAppData_2022.1.3\Data\Resources\LanguagePacks\TestLanguage"; ;
         if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
         {
             WritePath = folderBrowserDialog.SelectedFolder;
@@ -125,9 +119,13 @@ public partial class ContentViewModel
     private async void WriteFiles()
     {
         ProgressVisibility = true;
-        Counter = 0;
+        Counter = 1;
         foreach (string file in ListOfFilesToRead)
         {
+            if (OnFilesEditedChanged != null)
+            {
+                OnFilesEditedChanged(this, ListOfFilesToRead.Count, Counter);
+            }
             FileInfo fi = new FileInfo(file);
             string filename = fi.Name;
             string dataName;
@@ -157,11 +155,15 @@ public partial class ContentViewModel
             File.AppendAllText($@"{WritePath}\{filename}", "</root>");
             await Task.Delay(500);
             Counter++;
-            if (OnFilesEditedChanged != null)
-            {
-                OnFilesEditedChanged(this, ListOfFilesToRead.Count, Counter);
-            }
-        } 
+        }
+        
+
+        if (CurrentProgressValue >= 100)
+        {
+            CurrentProgressValue = 100;
+            ProgressVisibility = false;
+
+        }
     }
     #endregion
 }
